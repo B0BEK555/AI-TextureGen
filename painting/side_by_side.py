@@ -11,8 +11,8 @@ class SimpleDrawingApp:
 
         # --- Predefined Directories ---
         # IMPORTANT: Change these paths to your actual directories
-        self.input_dir = "C:/Users/damia/PycharmProjects/AI-TextureGen/data/textures"  # Directory containing your 16x16 pixel art
-        self.output_dir = "C:/Users/damia/PycharmProjects/AI-TextureGen/data/doodles"  # Directory to save your 256x256 doodles
+        self.input_dir = "../data/textures"  # Directory containing your 16x16 minecraft textures
+        self.output_dir = "../data/doodles"  # Directory to save your 256x256 doodles
 
         os.makedirs(self.output_dir, exist_ok=True)
 
@@ -46,9 +46,7 @@ class SimpleDrawingApp:
 
         self.canvas = tk.Canvas(main_frame, width=self.canvas_width, height=self.canvas_height, bd=2, relief="groove")
         self.canvas.grid(row=0, column=0, padx=10, pady=5)
-        # Place the transparency grid as the background
         self.canvas.create_image(0, 0, image=self.transparency_grid_tk, anchor=tk.NW)
-        # Place the transparent drawing image on top
         self.doodle_on_canvas = self.canvas.create_image(0, 0, image=ImageTk.PhotoImage(self.image), anchor=tk.NW)
 
         # Drawing event bindings
@@ -191,6 +189,10 @@ class SimpleDrawingApp:
 
         output_filepath = os.path.join(self.output_dir, self.current_loaded_filename)
         try:
+            number = 0
+            while os.path.isfile(output_filepath):
+                number += 1
+                output_filepath = output_filepath.replace(".png", str(number) + ".png")
             self.image.save(output_filepath)
             simpledialog.messagebox.showinfo("Save", f"Doodle saved to {output_filepath}")
         except Exception as e:
