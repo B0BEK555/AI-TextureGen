@@ -19,10 +19,10 @@ def build_unet_model(input_shape=(256, 256, 4), output_channels=4):
     inputs = keras.Input(shape=input_shape)
 
     # --- Encoder Path (Downsampling) ---
-    enc1 = encoder_block(inputs, 128)  # Output shape: 128x128x64
-    enc2 = encoder_block(enc1, 256)  # Output shape: 64x64x128
-    enc3 = encoder_block(enc2, 512)  # Output shape: 32x32x256
-    enc4 = encoder_block(enc3, 1024)  # Output shape: 16x16x512
+    enc1 = encoder_block(inputs, 64)  # Output shape: 128x128x64
+    enc2 = encoder_block(enc1, 128)  # Output shape: 64x64x128
+    enc3 = encoder_block(enc2, 256)  # Output shape: 32x32x256
+    enc4 = encoder_block(enc3, 512)  # Output shape: 16x16x512
 
     # --- Bottleneck ---
     bottleneck = encoder_block(enc4, 512)  # Output shape: 8x8x512
@@ -44,10 +44,6 @@ def build_unet_model(input_shape=(256, 256, 4), output_channels=4):
     output_image = layers.Conv2D(output_channels, kernel_size=1, padding='same', activation='sigmoid')(x)
 
     return keras.Model(inputs=inputs, outputs=output_image, name="doodle_to_pixelart_unet")
-
-
-import tensorflow as tf
-from tensorflow import keras
 
 
 # ... other imports
@@ -79,5 +75,24 @@ def combined_loss(y_true, y_pred):
 
     # Combine the scalar losses
     total_loss = (1.0 * alpha_loss_scalar) + (5.0 * rgb_loss_scalar)
+
+    return total_loss
+
+def customloss(y_true, y_pred):
+    # Split the true and predicted tensors into RGB and Alpha channels
+    y_true_rgb = y_true[..., :3]
+    y_true_alpha = y_true[..., 3:]
+
+    y_pred_rgb = y_pred[..., :3]
+    y_pred_alpha = y_pred[..., 3:]
+
+    # Use Binary Cross-Entropy on the Alpha channel for sharp edges
+    alpha_loss = tf.keras.losses.BinaryCrossentropy()(y_true_alpha, y_pred_alpha)
+
+    # Use Mean Absolute Error on the RGB channels for color accuracy
+    rgb_loss = tf.keras.losses.MeanAbsoluteError()(y_true_rgb, y_pred_rgb)
+
+    # You can weight these to emphasize one over the other
+    total_loss = (1.0 * alpha_loss) + (5.0 * rgb_loss)
 
     return total_loss

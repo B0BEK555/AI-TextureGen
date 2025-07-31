@@ -1,4 +1,3 @@
-import tensorflow as tf
 from tensorflow import keras
 from PIL import Image
 import numpy as np
@@ -6,6 +5,7 @@ import os
 
 # --- Import the model from the model.py file ---
 from model import build_unet_model
+from model import customloss
 
 
 # --- DATA PREPROCESSING FUNCTION (from previous conversation) ---
@@ -34,13 +34,13 @@ def predict_pixel_art(input_doodle_path, output_save_dir, model_path='doodle_pix
         # functions used in the model definition.
         # We need to tell Keras about the custom layer names.
         custom_objects = {
-            'build_unet_model': build_unet_model,
+            'customloss': customloss,
         }
 
         # When saving a Keras model as a .keras file, you don't typically need custom_objects
         # unless you used custom classes, but it's good practice for clarity.
         # Let's try loading without it first as it should work with functional API.
-        model = keras.models.load_model(model_path)
+        model = keras.models.load_model(model_path, custom_objects=custom_objects)
         print("Model loaded successfully!")
     except Exception as e:
         print(f"Error loading model: {e}")
@@ -72,7 +72,7 @@ def predict_pixel_art(input_doodle_path, output_save_dir, model_path='doodle_pix
 
 if __name__ == "__main__":
     model_file = 'doodle_pixelart_unet_model.keras'
-    input_doodle_to_test = '../data/doodles/diamond.png'
-    output_results_dir = 'generated_pixel_art/'
+    input_doodle_to_test = '../data/doodles/tropical_fish.png'
+    output_results_dir = 'generated/'
 
     predict_pixel_art(input_doodle_to_test, output_results_dir, model_file)

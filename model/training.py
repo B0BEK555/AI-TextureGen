@@ -6,7 +6,7 @@ from tensorflow.keras import layers
 from PIL import Image
 
 # --- Import the model from the model.py file ---
-from model import build_unet_model, combined_loss
+from model import build_unet_model, customloss
 
 
 # --- DATA LOADING FUNCTION (from previous conversation) ---
@@ -82,15 +82,15 @@ def train_model():
     )
 
     # --- Use the new combined loss function here! ---
-    model.compile(optimizer='adam', loss=combined_loss)
+    model.compile(optimizer='adam', loss=customloss)
 
     print("\nStarting training...")
     history = model.fit(
         doodles_array,
         textures_array,
-        epochs=20,
+        epochs=50,
         batch_size=16,
-        validation_split=0.2
+        validation_split=0.3
     )
     print("\nTraining complete.")
 
