@@ -21,4 +21,4 @@ If you want to contribude to the doodle dataset, please follow these steps.
  - Paint any doodle style you want, as long as it is clearly recognizable to be the texture you tried to replicate
  - The shape should not be much shifted or rotated from the original texture
  - Try to paint something, that you would paint as an input for the fully trained AI, to make you the output texture (if you don't think that your doodle would get convereted to the right texture, it's a bad training doodle)
- - You can make multiple styles, filled, outlines, but the doodle must satisfy all the other rules
+ - You can make multiple styles, filled, outlines, but the doodle must satisfy all the other rules (you can check the already existing doodles, if you are unsure what we mean)
